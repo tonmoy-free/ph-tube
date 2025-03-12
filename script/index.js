@@ -1,9 +1,9 @@
 console.log("index is connected");
 
 
-function removeActiveClass(){
+function removeActiveClass() {
     const activeButtons = document.getElementsByClassName("active");
-    for(let btn of activeButtons){
+    for (let btn of activeButtons) {
         btn.classList.remove("active");
     }
     console.log(activeButtons);
@@ -29,19 +29,49 @@ function loadVideos() {
 }
 
 const loadCategoryVideos = (id) => {
-    
+
     const url = `https://openapi.programming-hero.com/api/phero-tube/category/${id}`;
     console.log(url);
 
-    fetch (url)
-    .then(res=>res.json())
-    .then(data=>{
-        removeActiveClass();
-        const clickedButton = document.getElementById(`btn-${id}`);
-        clickedButton.classList.add("active");
-        
-        displayVideos(data.category)
-    });
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            removeActiveClass();
+            const clickedButton = document.getElementById(`btn-${id}`);
+            clickedButton.classList.add("active");
+
+            displayVideos(data.category)
+        });
+}
+
+const loadVideoDetails = (vedioId) => {
+    console.log(vedioId);
+    const url = `https://openapi.programming-hero.com/api/phero-tube/video/${vedioId}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => displayVideoDetails(data.video));
+}
+
+const displayVideoDetails = (video) => {
+    console.log(video);
+    document.getElementById("video_details").showModal();
+    const detailsContainer = document.getElementById("details-container");
+    detailsContainer.innerHTML = `
+<div class="card bg-base-100 image-full  shadow-sm">
+  <figure>
+    <img
+      src="${video.thumbnail}"
+      alt="Shoes" />
+  </figure>
+  <div class="card-body">
+    <h2 class="card-title">Card Title</h2>
+    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+    <div class="card-actions justify-end">
+      
+    </div>
+  </div>
+</div>
+`
 }
 // {
 //     "category_id": "1001",
@@ -90,10 +120,10 @@ function displayCategories(categories) {
 const displayVideos = (videos) => {
     const videoContainer = document.getElementById("video-container");
 
-    videoContainer.innerHTML ="";
+    videoContainer.innerHTML = "";
 
-    if(videos.length === 0 ){
-        videoContainer.innerHTML =`
+    if (videos.length === 0) {
+        videoContainer.innerHTML = `
         <div class="py-20 col-span-full flex flex-col justify-center items-center text-center">
                 <img class="w-[120px]" src="assets/Icon.png" alt="" srcset="">
                 <h2 class="text-2xl font-bold">Oops!! Sorry, There is no content here</h2>
@@ -130,6 +160,7 @@ const displayVideos = (videos) => {
                         <p class="text-sm text-gray-400">${video.others.views}</p>
                     </div>
                 </div>
+                <button onclick="loadVideoDetails('${video.video_id}')" class="btn btn-block">Show Details</button>
             </div>
         `
         //append
